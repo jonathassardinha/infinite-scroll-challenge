@@ -1,4 +1,5 @@
 import "./App.css";
+import { Card } from "./Card";
 
 function App() {
   return (
@@ -25,6 +26,16 @@ function App() {
         </section>
         <section className="px-20 py-12 bg-gray-100">
           <h2 className="text-3xl font-semibold text-black">Our products.</h2>
+          <div className="pt-8 flex gap-4 flex-wrap">
+            {Array.from({ length: 50 }).map(() => (
+              <Card
+                alt=""
+                src="https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/thumbnail.png"
+                name="Annibale Colombo Bed"
+                price={1899.99}
+              />
+            ))}
+          </div>
         </section>
       </main>
     </>
