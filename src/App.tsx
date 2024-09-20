@@ -1,4 +1,5 @@
 import "./App.css";
+import ProductList from "./ProductList";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         </section>
         <section className="px-20 py-12 bg-gray-100">
           <h2 className="text-3xl font-semibold text-black">Our products.</h2>
+          <ProductList />
         </section>
       </main>
     </>
