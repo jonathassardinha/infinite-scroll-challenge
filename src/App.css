@@ -5,3 +5,38 @@
 * {
   box-sizing: border-box;
 }
+.product-card{
+  transition: 0.2s;
+}
+.product-card:hover{
+  cursor: pointer;
+  transform: scale(1.02);
+}
+button{
+  transition: 0.2s;
+}
+button:hover{
+  filter: invert(1);
+}
+
+.loading-card-animate {
+  animation: shimmer 3s;
+  border: 1px solid #ddd;
+  animation-iteration-count: infinite;
+  background-image: linear-gradient(
+    to right,
+    #f6f7f8 0%,
+    #edeef1 20%,
+    #f6f7f8 40%,
+    #f6f7f8 100%
+  );
+  background-size: 1000px 100%;
+}
+@keyframes shimmer {
+  from {
+    background-position: -1000px 0;
+  }
+  to {
+    background-position: 1000px 0;
+  }
+}
