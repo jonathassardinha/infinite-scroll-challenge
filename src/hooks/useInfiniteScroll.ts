@@ -19,7 +19,7 @@ export const useInfiniteScroll = (
   hasMore: boolean,
   callback: () => void,
   options?: IntersectionObserverInit,
-  debounceTime: number = 200 // Default debounce time in ms
+  debounceTime: number = 100 // Reduced default debounce time for better responsiveness
 ) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
@@ -30,21 +30,20 @@ export const useInfiniteScroll = (
   // Debounce the callback to avoid too many API calls during fast scrolling
   const debouncedCallback = useRef(
     debounce(() => {
-      stableCallback();
+      if (hasMore && !loading) {
+        stableCallback();
+      }
     }, debounceTime)
   );
 
   useEffect(() => {
-    // Don't observe while loading
-    if (loading) return;
-    
     // Always disconnect the previous observer before creating a new one
     if (observer.current) {
       observer.current.disconnect();
     }
     
     const handleObserver = (entries: IntersectionObserverEntry[]) => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting && hasMore && !loading) {
         debouncedCallback.current();
       }
     };
@@ -52,7 +51,7 @@ export const useInfiniteScroll = (
     // Create the observer with default or custom options
     const defaultOptions: IntersectionObserverInit = {
       root: null,
-      rootMargin: '100px', // Load earlier for better UX
+      rootMargin: '250px', // Increased margin to detect earlier
       threshold: 0.1,
       ...options
     };

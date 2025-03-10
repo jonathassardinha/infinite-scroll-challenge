@@ -13,7 +13,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, loadingRef }) => {
                 <ProductCard key={product.id} product={product} />
             ))}
             {/* This empty div with the ref will trigger the loading of more products when it becomes visible */}
-            {loadingRef && <div ref={loadingRef} className="h-20 col-span-full flex items-center justify-center"></div>}
+            {loadingRef && <div ref={loadingRef} className="h-24 mt-4 col-span-full flex items-center justify-center"></div>}
         </div>
     );
 };

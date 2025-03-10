@@ -13,6 +13,12 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
   // Store the abort controller to cancel ongoing requests
   const abortControllerRef = useRef<AbortController | null>(null);
   
+  // Keep track of the current page to avoid race conditions
+  const currentPageRef = useRef(page);
+  useEffect(() => {
+    currentPageRef.current = page;
+  }, [page]);
+  
   const LIMIT = initialLimit;
 
   // Cleanup function to cancel any pending request when component unmounts
@@ -26,7 +32,10 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
 
   const fetchProducts = useCallback(async () => {
     // Don't fetch if already loading, no more data, or reached max retries
-    if (loading || (!hasMore && page > 0) || (error && retryCount >= maxRetries)) return;
+    if (loading || (!hasMore && currentPageRef.current > 0) || (error && retryCount >= maxRetries)) {
+      console.log("Fetch prevented:", { loading, hasMore, page: currentPageRef.current, error, retryCount, maxRetries });
+      return;
+    }
     
     // Cancel any previous ongoing request
     if (abortControllerRef.current) {
@@ -40,9 +49,13 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
     setLoading(true);
     setError(null);
     
+    // Use currentPageRef.current to get the latest page value
+    const currentPage = currentPageRef.current;
+    console.log(`Fetching products: page=${currentPage}, skip=${currentPage * LIMIT}, limit=${LIMIT}`);
+    
     try {
       const response = await fetch(
-        `https://dummyjson.com/products?limit=${LIMIT}&skip=${page * LIMIT}`,
+        `https://dummyjson.com/products?limit=${LIMIT}&skip=${currentPage * LIMIT}`,
         { signal }
       );
       
@@ -51,12 +64,18 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
       }
       
       const data = await response.json();
+      console.log(`Received data:`, { 
+        total: data.total, 
+        count: data.products?.length,
+        hasMore: data.total > (currentPage + 1) * LIMIT 
+      });
       
       if (!data.products || data.products.length === 0) {
         setHasMore(false);
       } else {
         setProducts((prevProducts) => [...prevProducts, ...data.products]);
         setPage((prevPage) => prevPage + 1);
+        setHasMore(data.total > (currentPage + 1) * LIMIT);
         setRetryCount(0); // Reset retry count on success
       }
     } catch (err) {
@@ -69,7 +88,7 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
     } finally {
       setLoading(false);
     }
-  }, [page, loading, hasMore, LIMIT, error, retryCount, maxRetries]);
+  }, [loading, hasMore, error, retryCount, maxRetries, LIMIT]);
 
   // Function to retry the last failed request
   const retryFetch = useCallback(() => {
@@ -83,6 +102,7 @@ export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
   const resetProducts = useCallback(() => {
     setProducts([]);
     setPage(0);
+    currentPageRef.current = 0;
     setHasMore(true);
     setError(null);
     setRetryCount(0);

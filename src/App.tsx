@@ -17,8 +17,12 @@ function App() {
   const loadingRef = useInfiniteScroll(
     loading, 
     hasMore, 
-    fetchProducts,
-    { rootMargin: '100px' }  // Load earlier, before fully scrolling to the end
+    useCallback(() => {
+      console.log("Infinite scroll triggered - fetching more products");
+      fetchProducts();
+    }, [fetchProducts]),
+    { rootMargin: '200px' },  // Increased margin to load earlier
+    100 // Low debounce time for better responsiveness
   );
 
   // Initial load
