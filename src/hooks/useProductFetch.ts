@@ -1,6 +1,6 @@
 // src/hooks/useProductFetch.ts
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { ProductType } from '../components';
+import { ProductType } from '@components/index';
 
 export const useProductFetch = (initialLimit = 10, maxRetries = 3) => {
   const [products, setProducts] = useState<ProductType[]>([]);

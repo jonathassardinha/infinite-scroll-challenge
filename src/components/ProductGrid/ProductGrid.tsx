@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductCard, { ProductType } from '../ProductCard/ProductCard';
+import ProductCard, { ProductType } from '@components/ProductCard/ProductCard';
 
 type ProductGridProps = {
     products: ProductType[];

@@ -6,8 +6,8 @@ import {
   LoadingIndicator, 
   ProductGrid, 
   SeeMoreButton
-} from "./components";
-import { useProductFetch, useInfiniteScroll } from "./hooks";
+} from "@components/index";
+import { useProductFetch, useInfiniteScroll } from "@hooks/index";
 
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
