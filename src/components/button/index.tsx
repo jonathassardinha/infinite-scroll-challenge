@@ -1,0 +1,1 @@
+export { SeeMoreProductsButton } from "./SeeMoreProductsButton";

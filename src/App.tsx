@@ -1,119 +1,58 @@
 import "./App.css";
+import { ProductListContainer } from "@components/ProductListContainer";
+import { MainLayout } from "@layouts/MainLayout";
+import { SeeMoreProductsButton } from "@components/button";
+import { Footer } from "@components/Footer";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
+import { useTranslation } from "react-i18next";
 
-function App() {
+/**
+ * @ErrorFallback to handle errors gracefully and display them to the user
+ * @param param0
+ * @returns
+ */
+const ErrorFallback = ({
+  error,
+  resetErrorBoundary,
+}: {
+  error: Error;
+  resetErrorBoundary: () => void;
+}) => {
   return (
-    <>
-      <main className="grow h-screen max-h-screen px-20 py-12 bg-gray-100">
-        <section className="h-full">
-          <div className="text-5xl font-extralight text-black mb-20">
-            <span>Home Office</span>
-            <p>Essentials.</p>
-          </div>
-          <div className="mb-32 flex gap-4">
-            <div className="bg-gray-200 p-4 flex flex-col gap-4 w-fit">
-              <div className="flex items-center justify-between">
-                <span className="text-sm bg-orange-100/60 px-4 py-1 rounded-full">
-                  Some badge
-                </span>
-                <button className="text-sm bg-white/60 px-4 py-1 rounded-full">
-                  Customize
-                </button>
-              </div>
-              <img
-                src="https://png.pngtree.com/png-vector/20231023/ourmid/pngtree-modern-wooden-desk-desk-png-image_10294080.png"
-                alt="Desk image"
-                width={400}
-                height={400}
-              />
-              <div className="bg-white p-3 gap-3 flex items-center">
-                <div>
-                  <p className="font-medium">Standing Desk</p>
-                  <p className="text-sm text-gray-400">From $990.00</p>
-                </div>
-                <div className="w-px self-stretch bg-gray-400 ml-auto" />
-                <img
-                  src="/shopping-cart.svg"
-                  alt="Shopping cart icon"
-                  className="mr-2 ml-1"
-                  width={24}
-                  height={24}
-                />
-              </div>
-            </div>
-            <div className="bg-gray-200 p-4 flex flex-col gap-4 w-fit">
-              <div className="flex items-center justify-between">
-                <span className="text-sm bg-orange-100/60 px-4 py-1 rounded-full">
-                  Some badge
-                </span>
-                <button className="text-sm bg-white/60 px-4 py-1 rounded-full">
-                  Customize
-                </button>
-              </div>
-              <img
-                src="https://png.pngtree.com/png-vector/20231023/ourmid/pngtree-modern-wooden-desk-desk-png-image_10294080.png"
-                alt="Desk image"
-                width={400}
-                height={400}
-              />
-              <div className="bg-white p-3 gap-3 flex items-center">
-                <div>
-                  <p className="font-medium">Standing Desk</p>
-                  <p className="text-sm text-gray-400">From $990.00</p>
-                </div>
-                <div className="w-px self-stretch bg-gray-400 ml-auto" />
-                <img
-                  src="/shopping-cart.svg"
-                  alt="Shopping cart icon"
-                  className="mr-2 ml-1"
-                  width={24}
-                  height={24}
-                />
-              </div>
-            </div>
-            <div className="bg-gray-200 p-4 flex flex-col gap-4 w-fit">
-              <div className="flex items-center justify-between">
-                <span className="text-sm bg-orange-100/60 px-4 py-1 rounded-full">
-                  Some badge
-                </span>
-                <button className="text-sm bg-white/60 px-4 py-1 rounded-full">
-                  Customize
-                </button>
-              </div>
-              <img
-                src="https://png.pngtree.com/png-vector/20231023/ourmid/pngtree-modern-wooden-desk-desk-png-image_10294080.png"
-                alt="Desk image"
-                width={400}
-                height={400}
-              />
-              <div className="bg-white p-3 gap-3 flex items-center">
-                <div>
-                  <p className="font-medium">Standing Desk</p>
-                  <p className="text-sm text-gray-400">From $990.00</p>
-                </div>
-                <div className="w-px self-stretch bg-gray-400 ml-auto" />
-                <img
-                  src="/shopping-cart.svg"
-                  alt="Shopping cart icon"
-                  className="mr-2 ml-1"
-                  width={24}
-                  height={24}
-                />
-              </div>
-            </div>
-          </div>
-          <p className="text-4xl font-light mb-4">See more produce</p>
-          <button className="bg-gray-200 px-8 py-2 rounded-full">
-            <img
-              src="/arrow-right.svg"
-              alt="Arrow right icon"
-              width={24}
-              height={24}
-            />
-          </button>
-        </section>
-      </main>
-    </>
+    <div role="alert" className="p-4 border border-red-400 rounded bg-red-100">
+      <p>An error has occurred.</p>
+      <pre className="whitespace-pre-wrap">{error.message}</pre>
+      <button
+        onClick={resetErrorBoundary}
+        className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+      >
+        Try again
+      </button>
+    </div>
   );
-}
+};
+
+const App = () => {
+  const { t } = useTranslation();
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+          {/* IMPROVEMENT: Use internationalisation (i18) to support different languages (especially import for different markets) */}
+          <MainLayout title={t("title")} additionalTitle={t("additionalTitle")}>
+            <ProductListContainer />
+
+            {/* Use semantic HTML for better a11y */}
+            <Footer>
+              <h3 className="mb-2">See more products</h3>
+              <SeeMoreProductsButton />
+            </Footer>
+          </MainLayout>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+};
 
 export default App;
